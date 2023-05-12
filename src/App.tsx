@@ -1,6 +1,9 @@
 import logo from './assets/logo.svg';
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { fetchTracks } from './lib/fetchTracks';
+import { AlbumCover } from './AlbumCover';
 
 const App = () => {
   const trackUrls = [
@@ -15,25 +18,11 @@ const App = () => {
   const goToNextTrack = () => {
     setTrackIndex(trackIndex + 1);
   };
-
-  const apiToken = '';
-
-  const fetchTracks = async () => {
-    const response = await fetch('https://api.spotify.com/v1/me/tracks', {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + apiToken,
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Fetching tracks failed with status ${response.status}`);
-    }
-    const data = (await response.json()) as { items: unknown[] };
-
-    return data.items;
-  };
-
-  useEffect(() => fetchTracks(), []);
+  const { data: tracks } = useQuery({
+    queryKey: ['tracks'],
+    queryFn: fetchTracks,
+  });
+  console.log(tracks);
 
   return (
     <div className="App">
@@ -42,11 +31,12 @@ const App = () => {
         <h1 className="App-title">Bienvenue sur le blind test</h1>
       </header>
       <div className="App-images">
-        <p>Il va falloir modifier le code pour faire un vrai blind test !</p>
+        <AlbumCover track={tracks[0]} />
       </div>
       <div className="App-buttons"></div>
       <audio src={trackUrls[trackIndex]} autoPlay controls />
       <button onClick={goToNextTrack}>Next track</button>
+      <p>{tracks && tracks[0].track.name}</p>
     </div>
   );
 };
