@@ -31,10 +31,10 @@ const App = () => {
         <h1 className="App-title">Bienvenue sur le blind test</h1>
       </header>
       <div className="App-images">
-        <AlbumCover track={tracks[0]} />
+        {tracks && <AlbumCover track={tracks[0]} />}
       </div>
       <div className="App-buttons"></div>
-      <audio src={trackUrls[trackIndex]} autoPlay controls />
+      <audio src={tracks[trackIndex].url} autoPlay controls />
       <button onClick={goToNextTrack}>Next track</button>
       <p>{tracks && tracks[0].track.name}</p>
     </div>
